@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">LegoStore-KT</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_login_button">Login</string>
+    <string name="login_register_button">Register</string>
+    <string name="login_password_recovery_button">Reset password</string>
+    <string name="login_email_hint">E-mail</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_register_header">Create account</string>
+    <string name="login_password_recovery_header">Forgot Password?</string>
+    <string name="register_name_hint">Full Name</string>
+</resources>

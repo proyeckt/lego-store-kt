@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "636909638941",
+    "project_id": "legostorefb",
+    "storage_bucket": "legostorefb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636909638941:android:80362416f082327972bdf4",
+        "android_client_info": {
+          "package_name": "com.example.legostore_kt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "636909638941-ch0l6j9cldmr1qucla5t6eb5qqepp06q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.legostore_kt",
+            "certificate_hash": "d7c204b716552727c53ecc33782b37168f4b51b9"
+          }
+        },
+        {
+          "client_id": "636909638941-bdbhs3tn1lffvlbkbjginjanijvsg0th.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlXBoK8hz2r-JQ2nDKdRuja0d1M4yUsno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636909638941-bdbhs3tn1lffvlbkbjginjanijvsg0th.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
