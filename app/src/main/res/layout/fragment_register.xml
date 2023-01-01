@@ -9,7 +9,7 @@
     tools:context=".presentation.register.RegisterFragment">
 
     <ImageButton
-        android:id="@+id/bBack"
+        android:id="@+id/ibBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:text="@string/login_register_header"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintTop_toTopOf="@id/bBack"
-        app:layout_constraintBottom_toBottomOf="@id/bBack"
+        app:layout_constraintTop_toTopOf="@id/ibBack"
+        app:layout_constraintBottom_toBottomOf="@id/ibBack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

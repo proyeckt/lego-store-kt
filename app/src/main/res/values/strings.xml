@@ -9,4 +9,11 @@
     <string name="login_register_header">Create account</string>
     <string name="login_password_recovery_header">Forgot Password?</string>
     <string name="register_name_hint">Full Name</string>
+    <string name="store_name">Lego Store</string>
+    <string name="product_name">Product Name</string>
+    <string name="unit_price">Unit Price</string>
+    <string name="stock">Stock</string>
+    <string name="cart">Cart</string>
+    <string name="add_cart">Add to Cart</string>
+
 </resources>
