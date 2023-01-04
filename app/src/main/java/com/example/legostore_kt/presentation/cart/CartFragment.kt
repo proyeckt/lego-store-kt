@@ -7,12 +7,23 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.legostore_kt.R
 import com.example.legostore_kt.adapters.CartAdapter
+import com.example.legostore_kt.api.APIService
+import com.example.legostore_kt.api.ProductsResponse
 import com.example.legostore_kt.databinding.FragmentCartBinding
+import com.example.legostore_kt.domain.model.Product
+import com.example.legostore_kt.services.ServiceBuilder
 import com.example.legostore_kt.util.Provider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Response
 
 @AndroidEntryPoint
 class CartFragment : Fragment(){
@@ -23,7 +34,8 @@ class CartFragment : Fragment(){
     private val viewModel: CartViewModel by viewModels()
 
     private lateinit var adapter :CartAdapter
-    private val cartList = Provider.cartList
+    private lateinit var cartList : MutableList<Product>
+    private lateinit var productsList : MutableList<Product>
 
 
     override fun onCreateView(
@@ -33,6 +45,9 @@ class CartFragment : Fragment(){
     ): View {
         //Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater,container,false)
+
+        cartList = Provider.cartList
+        productsList = Provider.productsList
 
         initRecyclerView()
 
@@ -61,7 +76,6 @@ class CartFragment : Fragment(){
 
     private fun initObservers() {
         viewModel.cartListState.observe(viewLifecycleOwner) { state ->
-            println("State:${state}")
             binding.tvTotal.text = "Total: $${state}"
         }
     }
@@ -74,7 +88,40 @@ class CartFragment : Fragment(){
     }
 
     private fun handleBuy() {
-        Toast.makeText(this.context,"Compra realizada",Toast.LENGTH_LONG).show()
+        Toast.makeText(this.context,"Purchase done",Toast.LENGTH_LONG).show()
+
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
+
+            val service = ServiceBuilder.buildService(APIService::class.java)
+            val call: Response<ProductsResponse> = service.buy()
+
+            activity?.runOnUiThread {
+                if (call.isSuccessful) {
+                    val products: ProductsResponse? = call.body()
+                    //show recycle view
+                    val productsRetrieved: List<Product> = products?.products ?: emptyList()
+                    productsList.clear()
+                    productsList.addAll(productsRetrieved)
+
+                    cartList.clear()
+                    adapter.notifyDataSetChanged()
+                    viewModel.calculateTotal(cartList)
+                    findNavController().navigate(R.id.action_cartFragment_to_homeFragment)
+
+                } else {
+                    //show error
+                    showError()
+                }
+            }
+        }
+    }
+
+    private fun showError() {
+        Toast.makeText(this.context,"An error happened loading data",Toast.LENGTH_SHORT).show()
+    }
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        throwable.printStackTrace()
     }
 
     override fun onDestroyView() {

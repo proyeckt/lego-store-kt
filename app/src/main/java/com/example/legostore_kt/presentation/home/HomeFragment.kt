@@ -17,16 +17,14 @@ import com.example.legostore_kt.api.APIService
 import com.example.legostore_kt.api.ProductsResponse
 import com.example.legostore_kt.databinding.FragmentHomeBinding
 import com.example.legostore_kt.domain.model.Product
+import com.example.legostore_kt.services.ServiceBuilder
 import com.example.legostore_kt.util.Provider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(){
@@ -35,13 +33,9 @@ class HomeFragment : Fragment(){
     private val binding get() = _binding!!
 
     private lateinit var adapter :ProductAdapter
-    private val productsList = Provider.productsList
-    private val cartList = Provider.cartList
 
-    private val baseUrl = "https://1be9db56-c889-466d-9c12-cba178414901.mock.pstmn.io/"
-
-    //CREATE HTTP CLIENT
-    private val okHttp = OkHttpClient.Builder()
+    private lateinit var cartList : MutableList<Product>
+    private lateinit var productsList : MutableList<Product>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +45,13 @@ class HomeFragment : Fragment(){
         //Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater,container,false)
 
-        searchProducts()
+        cartList = Provider.cartList
+        productsList = Provider.productsList
+
+        productsList.forEach { println("Name: ${it.name} Stock: ${it.stock}") }
+
+        if(productsList.isEmpty())
+            searchProducts()
         initRecyclerView()
 
         return binding.root
@@ -100,25 +100,19 @@ class HomeFragment : Fragment(){
         _binding = null
     }
 
-    private fun getRetroFit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            //.client(okHttp.build())
-            .build()
-    }
-
     private fun searchProducts(){
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
 
-            val call: Response<ProductsResponse> = getRetroFit().create(APIService::class.java).getProducts()
-            val products: ProductsResponse? = call.body()
+            val service = ServiceBuilder.buildService(APIService::class.java)
+            val call : Response<ProductsResponse> = service.getProducts()
+
             activity?.runOnUiThread {
                 if(call.isSuccessful){
+                    val products: ProductsResponse? = call.body()
                     //show recycle view
-                    val images: List<Product> = products?.products ?: emptyList()
+                    val productsRetrieved: List<Product> = products?.products ?: emptyList()
                     productsList.clear()
-                    productsList.addAll(images)
+                    productsList.addAll(productsRetrieved)
                     adapter.notifyDataSetChanged()
                 }
                 else{
@@ -158,8 +152,6 @@ class HomeFragment : Fragment(){
     }
 
     private fun onItemSelected(product: Product){
-        Toast.makeText(this.context,product.name, Toast.LENGTH_SHORT).show()
-
         val bundle = bundleOf("product" to product)
         findNavController().navigate(R.id.action_homeFragment_to_productFragment,bundle)
     }

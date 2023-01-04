@@ -15,8 +15,6 @@ class ProductViewHolder(private val view: View) : RecyclerView.ViewHolder(view){
     //var listener: (()->Unit)? = null
 
     fun bind(product: Product, onClickListener: (Product) -> Unit, onInsertListener: (Product) -> Unit){
-        val name ="Name :${product.name}"
-        println(name)
         //binding.
         //Picasso.get().load(product.image).into(binding.ivProduct)
         Glide.with(binding.ivProduct.context)
