@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.legostore_kt.databinding.FragmentProductBinding
 import com.example.legostore_kt.domain.model.Product
+import com.example.legostore_kt.util.Provider
 import com.squareup.picasso.Picasso
 
 class ProductFragment: Fragment() {
@@ -16,6 +17,8 @@ class ProductFragment: Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var product: Product
+
+    private val cartList = Provider.cartList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +51,20 @@ class ProductFragment: Fragment() {
 
     private fun initListeners() {
         with(binding) {
-            btAddCart.setOnClickListener { addToCart() }
+            btAddCart.setOnClickListener { addToCart(product) }
             ibBack.setOnClickListener {activity?.onBackPressed()}
         }
     }
 
-    fun addToCart () {
-        Toast.makeText(this.context, "Product ${product.name} has been added to the cart",Toast.LENGTH_SHORT).show()
+    private fun addToCart(product: Product){
+        val msg: String = if(product.stock > 0){
+            cartList.add(cartList.size,product)
+            "Product ${product.name} has been added sucessfully"
+        } else "Error: Product ${product.name} doesn't have enough stock"
+        Toast.makeText(this.context,msg, Toast.LENGTH_SHORT).show()
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

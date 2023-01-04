@@ -8,33 +8,42 @@
         android:layout_height="match_parent"
         tools:context=".presentation.home.HomeFragment">
 
+        <TextView
+            android:id="@+id/tvStore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/store_name"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="@+id/llHome"
+            app:layout_constraintStart_toStartOf="@+id/llHome"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
-            android:id="@+id/ll_home"
+            android:id="@+id/llHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/store_name"
-                android:layout_gravity="center_horizontal"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="30sp"/>
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/tvStore">
 
             <ImageButton
                 android:id="@+id/ibLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="20dp"
-                android:src="@drawable/ic_logout_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_gravity="start"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_logout_icon"/>
+
+            <Button
+                android:id="@+id/ibCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:backgroundTint="@color/dark_red"
+                android:text="@string/cart"/>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -44,7 +53,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_home" />
+            app:layout_constraintTop_toBottomOf="@+id/llHome" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

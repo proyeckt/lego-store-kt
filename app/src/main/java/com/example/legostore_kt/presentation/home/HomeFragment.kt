@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.legostore_kt.R
 import com.example.legostore_kt.adapters.ProductAdapter
@@ -16,7 +17,9 @@ import com.example.legostore_kt.api.APIService
 import com.example.legostore_kt.api.ProductsResponse
 import com.example.legostore_kt.databinding.FragmentHomeBinding
 import com.example.legostore_kt.domain.model.Product
+import com.example.legostore_kt.util.Provider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,12 +34,11 @@ class HomeFragment : Fragment(){
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: HomeViewModel by viewModels()
-
     private lateinit var adapter :ProductAdapter
-    private val productImages = mutableListOf<Product>()
+    private val productsList = Provider.productsList
+    private val cartList = Provider.cartList
 
-    val base_url = "https://489a19f7-f7d2-426a-8361-230148034a79.mock.pstmn.io/"
+    private val baseUrl = "https://1be9db56-c889-466d-9c12-cba178414901.mock.pstmn.io/"
 
     //CREATE HTTP CLIENT
     private val okHttp = OkHttpClient.Builder()
@@ -56,9 +58,14 @@ class HomeFragment : Fragment(){
     }
 
     private fun initRecyclerView() {
-        adapter = ProductAdapter(productImages) {onItemSelected(it)} //{product -> onItemSelected(product)}
-        binding.rvProducts.layoutManager = LinearLayoutManager(this.context)
+        val manager = LinearLayoutManager(this.context)
+        val decoration = DividerItemDecoration(this.context,manager.orientation)
+
+        adapter = ProductAdapter(productsList,{ onItemSelected(it) }, {onInsertSelected(it)})   //{product -> onItemSelected(product)}
+        binding.rvProducts.layoutManager = manager
         binding.rvProducts.adapter = adapter
+
+        binding.rvProducts.addItemDecoration(decoration)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,8 +78,12 @@ class HomeFragment : Fragment(){
     private fun initListeners() {
         with(binding) {
             ibLogout.setOnClickListener { handleLogout() }
-            //ibLogout.setOnClickListener { searchProducts() }
+            ibCart.setOnClickListener { handleCart() }
         }
+    }
+
+    private fun handleCart() {
+        findNavController().navigate(R.id.action_homeFragment_to_cartFragment)
     }
 
     private fun handleLogout(){
@@ -91,14 +102,14 @@ class HomeFragment : Fragment(){
 
     private fun getRetroFit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(base_url)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             //.client(okHttp.build())
             .build()
     }
 
     private fun searchProducts(){
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
 
             val call: Response<ProductsResponse> = getRetroFit().create(APIService::class.java).getProducts()
             val products: ProductsResponse? = call.body()
@@ -106,13 +117,12 @@ class HomeFragment : Fragment(){
                 if(call.isSuccessful){
                     //show recycle view
                     val images: List<Product> = products?.products ?: emptyList()
-                    productImages.clear()
-                    productImages.addAll(images)
+                    productsList.clear()
+                    productsList.addAll(images)
                     adapter.notifyDataSetChanged()
                 }
                 else{
                     //show error
-                    println("Bambini:${call.errorBody()}")
                     showError()
                 }
             }
@@ -150,11 +160,25 @@ class HomeFragment : Fragment(){
     private fun onItemSelected(product: Product){
         Toast.makeText(this.context,product.name, Toast.LENGTH_SHORT).show()
 
-        //val bundle = bundleOf("product" to product)
-        //findNavController().navigate(R.id.action_homeFragment_to_productFragment,bundle)
+        val bundle = bundleOf("product" to product)
+        findNavController().navigate(R.id.action_homeFragment_to_productFragment,bundle)
+    }
+
+    private fun onInsertSelected(product: Product){
+        var msg: String
+        if(product.stock > 0){
+            cartList.add(cartList.size,product)
+            msg = "Product ${product.name} has been added sucessfully"
+        }
+        else msg = "Error: Product ${product.name} doesn't have enough stock"
+        Toast.makeText(this.context,msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun showError() {
         Toast.makeText(this.context,"An error happened loading data",Toast.LENGTH_SHORT).show()
+    }
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
+        throwable.printStackTrace()
     }
 }

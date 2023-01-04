@@ -33,6 +33,12 @@
         <action
         android:id="@+id/action_homeFragment_to_loginFragment"
         app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
 
     <fragment
@@ -46,5 +52,12 @@
         <argument
             android:name="product"
             app:argType="com.example.legostore_kt.domain.model.Product" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.legostore_kt.presentation.cart.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart">
     </fragment>
 </navigation>

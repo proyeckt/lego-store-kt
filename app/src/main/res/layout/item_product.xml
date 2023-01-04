@@ -7,9 +7,21 @@
     android:layout_height="320dp">
 
     <ImageView
+        android:layout_gravity="center"
         android:id="@+id/ivProduct"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_no_image" />
+
+    <ImageButton
+        android:id="@+id/ibAddCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_to_cart"
+        android:backgroundTint="@color/dark_yellow"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"/>
 
 </androidx.cardview.widget.CardView>
